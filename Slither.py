@@ -1,5 +1,5 @@
 import pygame
-import time
+import random
 
 pygame.init()
 
@@ -7,6 +7,7 @@ pygame.init()
 white = (255,255,255)
 black = (0,0,0)
 red = (255,0,0)
+green = (0,155,0)
 
 display_width = 800
 display_height = 600
@@ -16,13 +17,17 @@ pygame.display.set_caption('Slither')
 
 clock = pygame.time.Clock()
 
-block_size = 10
+block_size = 10.0
 FPS = 30
 font = pygame.font.SysFont(None, 25)
 
+def snake(block_size, snakelist):
+    for XnY in snakelist:
+        pygame.draw.rect(gameDisplay, black, [XnY[0], XnY[1], block_size, block_size])
+
 def msg2screen(msg, color):
     screen_text = font.render(msg, True, color)
-    gameDisplay.blit(screen_text, [display_width/2, display_height/2])
+    gameDisplay.blit(screen_text, [display_width/3.5, display_height/2])
 
 def gameLoop():
     gameExit = False
@@ -32,6 +37,13 @@ def gameLoop():
     lead_y = display_height / 2
     lead_x_change = 0
     lead_y_change = 0
+
+    snakeList=[]
+    snakeLength = 1
+
+    randAppleX = round(random.randrange(0, display_width-block_size)/block_size)*block_size
+    randAppleY = round(random.randrange(0, display_height-block_size)/block_size)*block_size
+
     while not gameExit:
 
         while gameOver == True :
@@ -67,11 +79,30 @@ def gameLoop():
         lead_y += lead_y_change
 
         gameDisplay.fill(white)
-        pygame.draw.rect(gameDisplay, black, [lead_x,lead_y,block_size,block_size])
+        pygame.draw.rect(gameDisplay, red, [randAppleX,randAppleY,block_size,block_size])
+
+        snakeHead = []
+        snakeHead.append(lead_x)
+        snakeHead.append(lead_y)
+        snakeList.append(snakeHead)
+
+        if len(snakeList) > snakeLength:
+            del snakeList[0]
+        snake(block_size, snakeList)
         pygame.display.update()
+
+        for eachSegment in snakeList[:-1]:
+            if eachSegment == snakeHead:
+                gameOver = True
+
+        if lead_x ==randAppleX and lead_y == randAppleY:
+            randAppleX = round(random.randrange(0, display_width - block_size) / block_size) * block_size
+            randAppleY = round(random.randrange(0, display_height - block_size) / block_size) * block_size
+            snakeLength += 1
 
         if lead_x >= display_width or lead_x <= -block_size or lead_y >= display_height or lead_y <= -block_size:
             gameOver = True
+
 
         clock.tick(FPS)
 
