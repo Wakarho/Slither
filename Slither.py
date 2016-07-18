@@ -101,8 +101,8 @@ def gameLoop():
             if eachSegment == snakeHead:
                 gameOver = True
 
-        if lead_x >= randAppleX and lead_x <= randAppleX+AppleThickness:
-            if lead_y >= randAppleY and lead_y <=randAppleY + AppleThickness:
+        if lead_x >= randAppleX and lead_x <= randAppleX+AppleThickness - block_size:
+            if lead_y >= randAppleY and lead_y <=randAppleY + AppleThickness - block_size:
                 randAppleX = round(random.randrange(0, display_width - block_size) / block_size) * block_size
                 randAppleY = round(random.randrange(0, display_height - block_size) / block_size) * block_size
                 snakeLength += 1
