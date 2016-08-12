@@ -17,7 +17,8 @@ pygame.display.set_caption('Slither')
 
 clock = pygame.time.Clock()
 
-block_size = 10.0
+appleThickness = 25
+block_size = 15.0
 FPS = 30
 font = pygame.font.SysFont(None, 25)
 
@@ -29,6 +30,10 @@ def msg2screen(msg, color):
     screen_text = font.render(msg, True, color)
     gameDisplay.blit(screen_text, [display_width/3.5, display_height/2])
 
+def score(msg, color):
+    screen_text = font.render(msg, True, color)
+    gameDisplay.blit(screen_text, [display_width / 2, display_height / 10])
+
 def gameLoop():
     gameExit = False
     gameOver = False
@@ -38,11 +43,12 @@ def gameLoop():
     lead_x_change = 0
     lead_y_change = 0
 
+    points = 0
     snakeList=[]
     snakeLength = 1
 
-    randAppleX = round(random.randrange(0, display_width-block_size)/block_size)*block_size
-    randAppleY = round(random.randrange(0, display_height-block_size)/block_size)*block_size
+    randAppleX = round(random.randrange(0, display_width- appleThickness)/block_size)*block_size
+    randAppleY = round(random.randrange(0, display_height- appleThickness)/block_size)*block_size
 
     while not gameExit:
 
@@ -84,8 +90,8 @@ def gameLoop():
 
         gameDisplay.fill(white)
 
-        AppleThickness = 30
-        pygame.draw.rect(gameDisplay, red, [randAppleX,randAppleY,AppleThickness,AppleThickness])
+        score(str(points), green)
+        pygame.draw.rect(gameDisplay, red, [randAppleX,randAppleY,appleThickness,appleThickness])
 
         snakeHead = []
         snakeHead.append(lead_x)
@@ -101,11 +107,18 @@ def gameLoop():
             if eachSegment == snakeHead:
                 gameOver = True
 
-        if lead_x >= randAppleX and lead_x <= randAppleX+AppleThickness - block_size:
-            if lead_y >= randAppleY and lead_y <=randAppleY + AppleThickness - block_size:
-                randAppleX = round(random.randrange(0, display_width - block_size) / block_size) * block_size
-                randAppleY = round(random.randrange(0, display_height - block_size) / block_size) * block_size
+        if lead_x > randAppleX and lead_x < randAppleX + appleThickness or lead_x + block_size > randAppleX and lead_x + block_size < randAppleX + appleThickness:
+            if lead_y > randAppleY and lead_y < randAppleY + appleThickness or lead_y + block_size > randAppleY and lead_y + block_size < randAppleY + appleThickness:
+                randAppleX = round(random.randrange(0, display_width - appleThickness) / block_size) * block_size
+                randAppleY = round(random.randrange(0, display_height - appleThickness) / block_size) * block_size
                 snakeLength += 1
+                points += 1
+            elif lead_y + block_size > randAppleY and lead_y + block_size < randAppleY + appleThickness:
+                randAppleX = round(random.randrange(0, display_width - appleThickness) / block_size) * block_size
+                randAppleY = round(random.randrange(0, display_height - appleThickness) / block_size) * block_size
+                snakeLength += 1
+                points += 1
+
 
         if lead_x >= display_width or lead_x <= -block_size or lead_y >= display_height or lead_y <= -block_size:
             gameOver = True
